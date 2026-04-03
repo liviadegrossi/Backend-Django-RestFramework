@@ -1,6 +1,6 @@
-from school.models import Student, Course
-from school.serializers import StudentSerializer, CourseSerializer
-from rest_framework import viewsets
+from school.models import Student, Course, Enrollment
+from school.serializers import StudentSerializer, CourseSerializer, EnrollmentSerializer, ListEnrollmentStudentSerializer, ListEnrollmentCourseSerializer
+from rest_framework import viewsets, generics
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -9,3 +9,19 @@ class StudentViewSet(viewsets.ModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+
+class EnrollmentViewSet(viewsets.ModelViewSet):
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentSerializer
+
+class EnrollmentStudent(generics.ListAPIView):
+    def get_queryset(self):
+        queryset = Enrollment.objects.filter(student_id=self.kwargs['pk'])
+        return queryset
+    serializer_class = ListEnrollmentStudentSerializer
+
+class EnrollmentCourse(generics.ListAPIView):
+    def get_queryset(self):
+        queryset = Enrollment.objects.filter(course_id=self.kwargs['pk'])
+        return queryset
+    serializer_class = ListEnrollmentCourseSerializer
